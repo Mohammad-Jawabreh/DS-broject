@@ -1,0 +1,60 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# 1. Generating random data for 200 employees in an IT company in France.
+np.random.seed(42)  # For reproducibility
+data = {
+    'EmployeeID': range(1, 201),
+    'Name': [f"Employee_{i}" for i in range(1, 201)],
+    'Age': np.random.randint(22, 60, size=200),
+    'Position': np.random.choice(['Developer', 'Manager', 'Designer', 'Analyst', 'Support'], size=200),
+    'Salary': np.random.randint(30000, 120000, size=200),
+    'MonthlyRevenueGenerated': np.random.randint(5000, 50000, size=200),
+    'ExperienceYears': np.random.randint(0, 40, size=200),
+    'Location': np.random.choice(['Paris', 'Lyon', 'Marseille', 'Toulouse', 'Nice'], size=200)
+}
+# Creating a DataFrame
+employee_df = pd.DataFrame(data)
+# Saving the DataFrame to an Excel file
+excel_file = 'employee_data.xlsx'
+employee_df.to_excel(excel_file, index=False)
+print(f"Data saved to {excel_file}")
+# 2. Analyzing the DataFrame
+print("Summary of Dataset:")
+print(employee_df.describe())
+# Grouping by Position to analyze average salary and revenue generated
+position_analysis = employee_df.groupby('Position')[['Salary', 'MonthlyRevenueGenerated']].mean()
+print("\nAverage Salary and Revenue by Position:")
+print(position_analysis)
+# Analyzing Revenue by Location
+location_revenue = employee_df.groupby('Location')['MonthlyRevenueGenerated'].sum()
+print("\nTotal Revenue by Location:")
+print(location_revenue)
+# 3. Data Visualization
+sns.set_theme(style="whitegrid")
+# Salary distribution
+plt.figure(figsize=(10, 6))
+sns.histplot(employee_df['Salary'], kde=True, bins=30, color='blue')
+plt.title('Salary Distribution')
+plt.xlabel('Salary')
+plt.ylabel('Frequency')
+plt.savefig('salary_distribution.png')
+plt.show()
+# Average Revenue by Position
+plt.figure(figsize=(10, 6))
+position_analysis.plot(kind='bar', figsize=(10, 6), legend=True)
+plt.title('Average Salary and Monthly Revenue by Position')
+plt.ylabel('Amount (€)')
+plt.xlabel('Position')
+plt.grid(axis='y')
+plt.savefig('average_salary_revenue_by_position.png')
+plt.show()
+# Revenue by Location
+plt.figure(figsize=(10, 6))
+location_revenue.plot(kind='pie', autopct='%1.1f%%', startangle=90, cmap='tab20')
+plt.title('Revenue Contribution by Location')
+plt.ylabel('')
+plt.savefig('revenue_by_location.png')
+plt.show()
